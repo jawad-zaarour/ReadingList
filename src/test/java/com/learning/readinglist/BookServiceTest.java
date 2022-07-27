@@ -1,6 +1,6 @@
 package com.learning.readinglist;
 
-import com.learning.exception.ReadingListServiceException;
+import com.learning.exception.ServiceException;
 import com.learning.readinglist.entity.Book;
 import com.learning.readinglist.repo.BookRepository;
 import com.learning.readinglist.service.BookService;
@@ -57,10 +57,10 @@ class ReadingListServiceTest {
 
         // Writing Assertions for Exceptions
         // Verify that the method "readingListServiceTest.saveBook(book)"
-        // under test of already book exciting throws the "ReadingListServiceException"
+        // under test of already book exciting throws the "ServiceException"
         // that contains the message: "ISBN " + book.getIsbn() + " taken"
         assertThatThrownBy(() -> bookServiceTest.saveBook(book))
-                .isInstanceOf(ReadingListServiceException.class)
+                .isInstanceOf(ServiceException.class)
                 .hasMessageContaining("ISBN " + book.getIsbn() + " taken");
 
         // Verify that nothing has been saved in Database
