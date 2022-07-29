@@ -2,6 +2,7 @@ package com.learning.readinglist;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,24 +25,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .antMatchers("/api/books/*").hasAnyRole("ADMIN", "USER")
-                .antMatchers("/api/users/*").hasAnyRole("ADMIN", "USER")
-                .antMatchers("/api/users/everybody").permitAll()
+                .mvcMatchers("/api/books/*").hasAnyRole("ADMIN", "USER")
+                .mvcMatchers("/api/users/*").hasAnyRole("ADMIN", "USER")
+                .mvcMatchers("/api/users/everybody").permitAll()
                 .and()
                 .formLogin();
         http.cors().and().csrf().disable();
     }
+
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
-//        auth.inMemoryAuthentication()
-//                .withUser("user")
-//                .password("123456")
-//                .roles("USER")
-//                .and()
-//                .withUser("Jawad")
-//                .password("123456")
-//                .roles("ADMIN");

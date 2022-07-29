@@ -1,6 +1,6 @@
 package com.learning.readinglist.service;
 
-import com.learning.exception.ReadingListServiceException;
+import com.learning.exception.ServiceException;
 import com.learning.readinglist.entity.Book;
 import com.learning.readinglist.repo.BookRepository;
 import lombok.AllArgsConstructor;
@@ -16,9 +16,10 @@ public class BookService {
     @Autowired
     private BookRepository bookRepository;
 
-
     public Book saveBook(Book book) {
-
+        if (bookRepository.existsBookByIsbn(book.getIsbn())) {
+            throw new ServiceException("ISBN " + book.getIsbn() + " taken");
+        }
         return bookRepository.save(book);
     }
 
@@ -28,7 +29,7 @@ public class BookService {
 
     public Book getBookById(Long id) {
         if (!bookRepository.existsById(id)) {
-            throw new ReadingListServiceException("book with id " + id + " does not exists");
+            throw new ServiceException("book with id " + id + " does not exists");
         }
         return bookRepository.findById(id).orElse(null);
     }
@@ -39,7 +40,7 @@ public class BookService {
 
     public String deleteBook(Long id) {
         if (!bookRepository.existsById(id)) {
-            throw new ReadingListServiceException("book with id " + id + " does not exists");
+            throw new ServiceException("book with id " + id + " does not exists");
         }
         bookRepository.deleteById(id);
         return "Book removed !! " + id;
@@ -55,7 +56,5 @@ public class BookService {
         return bookRepository.save(existingBook);
     }
 
-    public Book getBook(long bookId) {
-        return bookRepository.findById(bookId).orElse(null);
-    }
+
 }

@@ -10,7 +10,7 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
-class ReadingListRepositoryTest {
+class BookRepositoryTest {
 
     @Autowired
     private BookRepository bookRepositoryUnderTest;

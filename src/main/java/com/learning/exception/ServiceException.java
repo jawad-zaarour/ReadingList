@@ -1,7 +1,7 @@
 package com.learning.exception;
 
-public class ReadingListServiceException extends RuntimeException {
-    public ReadingListServiceException(String message) {
+public class ServiceException extends RuntimeException {
+    public ServiceException(String message) {
         super(message);
     }
 }

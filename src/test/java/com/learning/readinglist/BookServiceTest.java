@@ -22,8 +22,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ReadingListServiceTest {
-    private BookService bookServiceTest;
+class BookServiceTest {
+    private BookService bookService;
     Book book;
 
     @Mock
@@ -31,7 +31,7 @@ class ReadingListServiceTest {
 
     @BeforeEach
     void setUp() {
-        bookServiceTest = new BookService(bookRepository);
+        bookService = new BookService(bookRepository);
         book = new Book(1L, "1111",
                 "Atoms", "Einstein", "Advanced");
     }
@@ -40,7 +40,7 @@ class ReadingListServiceTest {
     @Test
     void saveBookTest() {
         //when
-        bookServiceTest.saveBook(book);
+        bookService.saveBook(book);
         //then
         ArgumentCaptor<Book> bookArgumentCaptor =
                 ArgumentCaptor.forClass(Book.class);
@@ -59,7 +59,7 @@ class ReadingListServiceTest {
         // Verify that the method "readingListServiceTest.saveBook(book)"
         // under test of already book exciting throws the "ServiceException"
         // that contains the message: "ISBN " + book.getIsbn() + " taken"
-        assertThatThrownBy(() -> bookServiceTest.saveBook(book))
+        assertThatThrownBy(() -> bookService.saveBook(book))
                 .isInstanceOf(ServiceException.class)
                 .hasMessageContaining("ISBN " + book.getIsbn() + " taken");
 
@@ -71,7 +71,7 @@ class ReadingListServiceTest {
     @Test
     void getBooksTest() {
         //when
-        bookServiceTest.getBooks();
+        bookService.getBooks();
         //then
         verify(bookRepository).findAll();
     }
@@ -85,7 +85,7 @@ class ReadingListServiceTest {
         when(bookRepository.findById(book.getId()))
                 .thenReturn(Optional.of(book));
 
-        Book b = bookServiceTest.getBookById(1L);
+        Book b = bookService.getBookById(1L);
 
        // assertThat("Jawad").isEqualTo(b.getReader());
     }
@@ -104,7 +104,7 @@ class ReadingListServiceTest {
         book.setDescription("new dec");
         book.setAuthor("Ram");
         // when -  action or the behaviour that we are going test
-        Book updatedBook = bookServiceTest.updateBook(book);
+        Book updatedBook = bookService.updateBook(book);
         // then - verify the output
         assertNotNull(updatedBook);
         assertThat(updatedBook.getDescription()).isEqualTo("new dec");

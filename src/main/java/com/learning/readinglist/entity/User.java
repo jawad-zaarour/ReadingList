@@ -14,6 +14,7 @@ public class User {
     @ManyToMany(targetEntity = Book.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Book> books = new HashSet<>();
 
+    @Column(unique = true)
     private String userName;
     private String password;
     @Column(unique = true)
@@ -21,7 +22,8 @@ public class User {
     private boolean active;
     private String roles;
 
-    public User(Long id, Set<Book> books, String userName, String password, String email, boolean active, String roles) {
+    public User(Long id, Set<Book> books, String userName, String password,
+                String email, boolean active, String roles) {
         this.id = id;
         this.books = books;
         this.userName = userName;

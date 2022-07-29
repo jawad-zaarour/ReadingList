@@ -39,7 +39,7 @@ public class UserController {
 
     @PutMapping("/{userId}/books/{bookId}")
     User addBookToUser(@PathVariable long bookId, @PathVariable long userId){
-        Book book =  bookService.getBook(bookId);
+        Book book =  bookService.getBookById(bookId);
         User user = userService.getUser(userId);
         user.addBook(book);
         return userService.createUser(user);
