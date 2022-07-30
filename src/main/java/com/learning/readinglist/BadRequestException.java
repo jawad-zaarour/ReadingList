@@ -1,4 +1,4 @@
-package com.learning.exception;
+package com.learning.readinglist;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

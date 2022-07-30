@@ -25,6 +25,9 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Contract test (unit test that test only the controller and mock the service): ensure what are the response format of the api
+ */
 @WebMvcTest(controllers = BookController.class)
 public class BookControllerTest {
 
@@ -48,13 +51,9 @@ public class BookControllerTest {
         book.setId(20L);
     }
 
-
-
     @Test
     @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
     public void shouldReturnBookById() throws Exception {
-
-
         given(bookService.getBookById(anyLong())).willReturn(book);
 
         this.mockMvc.perform(
@@ -63,7 +62,18 @@ public class BookControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.isbn").value("1111"));
+    }
 
+    @Test
+    @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+    public void testGetBookByIdEmptyResponse() throws Exception {
+        given(bookService.getBookById(anyLong())).willReturn(null);
+
+        this.mockMvc.perform(
+                        MockMvcRequestBuilders.get("/api/books/{id}", 20L)
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+                .andDo(print());
     }
 
     @Test
@@ -79,6 +89,7 @@ public class BookControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(inputJson))
                 .andExpect(status().is2xxSuccessful());
+
         verify(bookService, times(1)).saveBook(any(Book.class));
     }
 }

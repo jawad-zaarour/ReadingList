@@ -1,6 +1,5 @@
 package com.learning.readinglist;
 
-import com.learning.exception.ServiceException;
 import com.learning.readinglist.entity.Book;
 import com.learning.readinglist.repo.BookRepository;
 import com.learning.readinglist.service.BookService;
@@ -11,6 +10,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
@@ -23,7 +23,10 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
+
+    //@Autowired
     private BookService bookService;
+
     Book book;
 
     @Mock
@@ -36,9 +39,12 @@ class BookServiceTest {
                 "Atoms", "Einstein", "Advanced");
     }
 
-
+    /**
+     * This method is considered as an integration test because it is testing the behavior of the db
+     */
     @Test
     void saveBookTest() {
+        long bookId = book.getId();
         //when
         bookService.saveBook(book);
         //then
@@ -48,11 +54,12 @@ class BookServiceTest {
                 .save(bookArgumentCaptor.capture());
         Book captureBook = bookArgumentCaptor.getValue();
         assertThat(captureBook).isEqualTo(book);
+
+        assertNotNull(bookService.getBookById(bookId));
     }
 
     @Test
     void saveBookExistedTest() {
-
         given(bookRepository.existsBookByIsbn(book.getIsbn())).willReturn(true);
 
         // Writing Assertions for Exceptions
@@ -65,7 +72,6 @@ class BookServiceTest {
 
         // Verify that nothing has been saved in Database
         verify(bookRepository, never()).save(any());
-
     }
 
     @Test

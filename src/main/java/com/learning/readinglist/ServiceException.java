@@ -1,4 +1,4 @@
-package com.learning.exception;
+package com.learning.readinglist;
 
 public class ServiceException extends RuntimeException {
     public ServiceException(String message) {

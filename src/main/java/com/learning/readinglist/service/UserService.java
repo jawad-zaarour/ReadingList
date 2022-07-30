@@ -1,11 +1,9 @@
 package com.learning.readinglist.service;
 
-import com.learning.exception.ServiceException;
+import com.learning.readinglist.ServiceException;
 import com.learning.readinglist.entity.User;
 import com.learning.readinglist.repo.UserRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
