@@ -1,9 +1,12 @@
 package com.learning.readinglist;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.learning.readinglist.controller.BookController;
 import com.learning.readinglist.entity.Book;
 import com.learning.readinglist.service.BookService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -15,11 +18,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,16 +37,23 @@ public class BookControllerTest {
     @Autowired
     BookController bookController;
 
+    Book book = new Book();
 
-    @Test
-    @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
-    public void shouldReturnBookById() throws Exception {
-        Book book = new Book();
+    @BeforeEach
+    public void setup() {
         book.setAuthor("Dirac");
         book.setDescription("for graduate and research students");
         book.setIsbn("1111");
         book.setTitle("Relativistic Quantum Mechanics");
         book.setId(20L);
+    }
+
+
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+    public void shouldReturnBookById() throws Exception {
+
 
         given(bookService.getBookById(anyLong())).willReturn(book);
 
@@ -60,21 +69,16 @@ public class BookControllerTest {
     @Test
     @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
     public void ShouldSaveBook() throws Exception {
-        Book book = new Book();
-        book.setAuthor("Dirac");
-        book.setDescription("for graduate and research students");
-        book.setIsbn("1111");
-        book.setTitle("Relativistic Quantum Mechanics");
-        book.setId(20L);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String inputJson = objectMapper.writeValueAsString(book);
 
-        given(bookService.saveBook(book)).willReturn(book);
+        //given(bookService.saveBook(book)).willReturn(book);
 
         this.mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/books/")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .content("{\"isbn\": \"8888\", \"title\":\"DA7\", \"author\":\"jawad\", " +
-                                        "\"description\":\"aaaaaa\"}"))
-                .andExpect(status().isCreated());
-        verify(bookService).saveBook(any(Book.class));
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(inputJson))
+                .andExpect(status().is2xxSuccessful());
+        verify(bookService, times(1)).saveBook(any(Book.class));
     }
 }

@@ -16,12 +16,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
+    @Mock
     private UserService userService;
+
     User user;
 
     @Mock
@@ -40,7 +44,7 @@ public class UserServiceTest {
     @Test
     public void createUserTest() {
         //when
-        userService.createUser(user);
+        given(userService.createUser(user)).willReturn(user);
         //then
         ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userArgumentCaptor.capture());
