@@ -1,12 +1,14 @@
 package com.learning.readinglist.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+//TODO please check the logic in this entity
 @Entity
 @Table(name = "books")
 public class Book {

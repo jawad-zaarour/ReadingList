@@ -1,5 +1,6 @@
 package com.learning.readinglist;
 
+import com.learning.readinglist.dto.BookDTO;
 import com.learning.readinglist.entity.Book;
 import com.learning.readinglist.repo.BookRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -7,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.List;
+import java.util.Optional;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
@@ -48,9 +51,9 @@ class BookRepositoryTest {
         bookRepositoryUnderTest.save(book_2);
         bookRepositoryUnderTest.save(book_3);
         //when
-        Book expectedBook = bookRepositoryUnderTest.findByTitle("Molecules");
+        Optional<Book> expectedBook = bookRepositoryUnderTest.findByTitle("Molecules");
         //then
-        assertThat(expectedBook.getTitle()).isEqualTo("Molecules");
-        assertThat(expectedBook.getTitle()).isNotEqualTo("MoleculeS");
+        assertThat(expectedBook.get().getTitle()).isEqualTo("Molecules");
+        assertThat(expectedBook.get().getTitle()).isNotEqualTo("MoleculeS");
     }
 }

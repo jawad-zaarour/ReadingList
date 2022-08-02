@@ -11,5 +11,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByEmail(String email);
 
     //returns all users related to book with input bookId
-    //List<User> findUsersByBooksId (Long bookId);
+    List<User> findUsersByBooksId (Long bookId);
 }

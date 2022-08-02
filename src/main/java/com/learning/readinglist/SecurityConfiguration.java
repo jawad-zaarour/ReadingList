@@ -25,8 +25,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .mvcMatchers("/api/books/*").hasAnyRole("ADMIN", "USER")
-                .mvcMatchers("/api/users/*").hasAnyRole("ADMIN", "USER")
+                .mvcMatchers("/api/books/L").hasAnyRole("ADMIN", "USER")
+                .mvcMatchers("/api/users/L").hasAnyRole("ADMIN", "USER")
                 .mvcMatchers("/api/users/everybody").permitAll()
                 .and()
                 .formLogin();

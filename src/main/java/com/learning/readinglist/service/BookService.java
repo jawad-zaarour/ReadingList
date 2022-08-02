@@ -1,28 +1,25 @@
 package com.learning.readinglist.service;
 
-import com.learning.readinglist.dto.BookDTO;
-import com.learning.readinglist.dto.BookMapper;
 import com.learning.readinglist.ServiceException;
 import com.learning.readinglist.entity.Book;
 import com.learning.readinglist.repo.BookRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
  * TODO: all the methods should return DTO objects instead of the db entities
  */
-@AllArgsConstructor
 @Service
 public class BookService {
 
     @Autowired
     private BookRepository bookRepository;
 
-    @Autowired
-    private BookMapper bookMapper;
+    public BookService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
 
     public Book saveBook(Book book) {
         if (bookRepository.existsBookByIsbn(book.getIsbn())) {
@@ -31,21 +28,24 @@ public class BookService {
         return bookRepository.save(book);
     }
 
-    public List<Book> getBooks() {
-        return bookRepository.findAll();
-    }
+    public Book getBookById(Long id) {
 
-    // this should not throw an exception, it should return the existing object or null
-    public BookDTO getBookById(Long id) {
-        /*if (!bookRepository.existsById(id)) {
+        Optional<Book> result = bookRepository.findById(id);
+        if (result.isPresent()) {
+            return result.get();
+        } else {
             throw new ServiceException("book with id " + id + " does not exists");
-        }*/
-        return bookRepository.findById(id)
-                .map(bookMapper::getBookDTO).orElse(null);
+        }
     }
 
     public Book getBookByTitle(String title) {
-        return bookRepository.findByTitle(title);
+
+        Optional<Book> result = bookRepository.findByTitle(title);
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new ServiceException("book with title " + title + " does not exists");
+        }
     }
 
     public String deleteBook(Long id) {
@@ -57,23 +57,20 @@ public class BookService {
     }
 
     public Book updateBook(Book book) {
-        Book existingBook =
-                bookRepository.findById(book.getId()).orElse(null);
-
-        // Book existingBook  = getBookById(book.getId());
-
-        //TODO: you should check the book is null or not
-        //TODO: you should use the above method getBookById()
-
-        if(existingBook != null) {
-            existingBook.setTitle(book.getTitle());
-            existingBook.setDescription(book.getDescription());
-            existingBook.setIsbn(book.getIsbn());
-            existingBook.setAuthor(book.getAuthor());
-            return bookRepository.save(existingBook);
-        } else {
-            return null;
+        if (book != null) {
+            Book existingBook =
+                    bookRepository.findById(book.getId()).orElse(null);
+            if (existingBook != null) {
+                existingBook.setTitle(book.getTitle());
+                existingBook.setDescription(book.getDescription());
+                existingBook.setIsbn(book.getIsbn());
+                existingBook.setAuthor(book.getAuthor());
+                return bookRepository.save(existingBook);
+            } else {
+                return null;
+            }
         }
+        return null;
     }
 
 

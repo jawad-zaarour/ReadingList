@@ -1,11 +1,14 @@
 package com.learning.readinglist.service;
 
 import com.learning.readinglist.ServiceException;
+import com.learning.readinglist.entity.Book;
 import com.learning.readinglist.entity.User;
 import com.learning.readinglist.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -46,4 +49,23 @@ public class UserService {
     }
 
 
+    public User addBook(long userId, Book newBook) {
+        User user = getUser(userId);
+
+        if (user == null) {
+            return null;
+        }
+
+        user.getBooks().add(newBook);
+
+        return user;
+    }
+
+    public void updateUser(User user) {
+        userRepository.save(user);
+    }
+
+    public List<User> getUsersByBookId(long bookId) {
+        return userRepository.findUsersByBooksId(bookId);
+    }
 }

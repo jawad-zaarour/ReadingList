@@ -1,7 +1,5 @@
 package com.learning.readinglist;
 
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.learning.readinglist.controller.BookController;
 import com.learning.readinglist.entity.Book;
@@ -17,8 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -48,7 +45,6 @@ public class BookControllerTest {
         book.setDescription("for graduate and research students");
         book.setIsbn("1111");
         book.setTitle("Relativistic Quantum Mechanics");
-        book.setId(20L);
     }
 
     @Test
@@ -66,15 +62,17 @@ public class BookControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
-    public void testGetBookByIdEmptyResponse() throws Exception {
-        given(bookService.getBookById(anyLong())).willReturn(null);
+    public void shouldReturnBookByTitle() throws Exception {
+        given(bookService.getBookByTitle(anyString())).willReturn(book);
 
         this.mockMvc.perform(
-                        MockMvcRequestBuilders.get("/api/books/{id}", 20L)
+                        MockMvcRequestBuilders.get("/api/books/book-by-title/Relativistic Quantum Mechanics")
                                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent())
-                .andDo(print());
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Relativistic Quantum Mechanics"));
     }
+
 
     @Test
     @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
@@ -82,7 +80,7 @@ public class BookControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String inputJson = objectMapper.writeValueAsString(book);
 
-        //given(bookService.saveBook(book)).willReturn(book);
+        given(bookService.saveBook(any(Book.class))).willReturn(book);
 
         this.mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/books/")

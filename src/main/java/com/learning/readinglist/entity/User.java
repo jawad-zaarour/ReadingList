@@ -1,9 +1,11 @@
 package com.learning.readinglist.entity;
 
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+//TODO please check the logic in this entity
 @Entity
 @Table(name = "users")
 public class User {
@@ -92,7 +94,5 @@ public class User {
         this.books = books;
     }
 
-    public void addBook(Book book) {
-        books.add(book);
-    }
+
 }

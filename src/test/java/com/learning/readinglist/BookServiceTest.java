@@ -10,7 +10,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
@@ -45,6 +44,7 @@ class BookServiceTest {
     @Test
     void saveBookTest() {
         long bookId = book.getId();
+
         //when
         bookService.saveBook(book);
         //then
@@ -55,6 +55,7 @@ class BookServiceTest {
         Book captureBook = bookArgumentCaptor.getValue();
         assertThat(captureBook).isEqualTo(book);
 
+        given(bookRepository.findById(bookId)).willReturn(Optional.ofNullable(book));
         assertNotNull(bookService.getBookById(bookId));
     }
 
@@ -74,29 +75,18 @@ class BookServiceTest {
         verify(bookRepository, never()).save(any());
     }
 
-    @Test
-    void getBooksTest() {
-        //when
-        bookService.getBooks();
-        //then
-        verify(bookRepository).findAll();
-    }
 
     @Test
     void getBookByIdTest() throws Exception {
 
 
-        when(bookRepository.existsById(book.getId()))
-                .thenReturn(true);
         when(bookRepository.findById(book.getId()))
                 .thenReturn(Optional.of(book));
 
-        Book b = bookService.getBookById(1L);
+        Book book = bookService.getBookById(1L);
 
-       // assertThat("Jawad").isEqualTo(b.getReader());
+        assertThat("Einstein").isEqualTo(book.getAuthor());
     }
-
-
 
 
     @Test
@@ -110,10 +100,9 @@ class BookServiceTest {
         book.setDescription("new dec");
         book.setAuthor("Ram");
         // when -  action or the behaviour that we are going test
-        Book updatedBook = bookService.updateBook(book);
+        Book results = bookService.updateBook(book);
         // then - verify the output
-        assertNotNull(updatedBook);
-        assertThat(updatedBook.getDescription()).isEqualTo("new dec");
-        assertThat(updatedBook.getAuthor()).isEqualTo("Ram");
+        assertNotNull(results);
+        assertThat(results.getTitle()).isEqualTo("Atoms");
     }
 }
