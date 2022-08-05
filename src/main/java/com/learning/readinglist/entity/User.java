@@ -1,19 +1,39 @@
 package com.learning.readinglist.entity;
 
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 //TODO please check the logic in this entity
 @Entity
+@Data
 @Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(targetEntity = Book.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade =
+                    {
+                            CascadeType.DETACH,
+                            CascadeType.MERGE,
+                            CascadeType.REFRESH,
+                            CascadeType.PERSIST
+                    },
+            targetEntity = Book.class)
+    @JoinTable(name = "users_books",
+            joinColumns = @JoinColumn(name = "USER_ID",
+                    nullable = false,
+                    updatable = false),
+            inverseJoinColumns = @JoinColumn(name = "BOOK_ID",
+                    nullable = false,
+                    updatable = false),
+            foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT),
+            inverseForeignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     private Set<Book> books = new HashSet<>();
 
     @Column(unique = true)
@@ -37,62 +57,5 @@ public class User {
 
     public User() {
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public String getRoles() {
-        return roles;
-    }
-
-    public void setRoles(String roles) {
-        this.roles = roles;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Set<Book> getBooks() {
-        return books;
-    }
-
-    public void setBooks(Set<Book> books) {
-        this.books = books;
-    }
-
 
 }

@@ -1,11 +1,15 @@
 package com.learning.readinglist.service;
 
 import com.learning.readinglist.ServiceException;
+import com.learning.readinglist.dto.BookDTO;
 import com.learning.readinglist.entity.Book;
 import com.learning.readinglist.repo.BookRepository;
+import com.learning.readinglist.util.ObjectMapperUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -17,32 +21,43 @@ public class BookService {
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
-    public Book saveBook(Book book) {
+    public BookService() {
+
+    }
+
+    public BookDTO saveBook(Book book) {
+
         if (bookRepository.existsBookByIsbn(book.getIsbn())) {
             throw new ServiceException("ISBN " + book.getIsbn() + " taken");
         }
-        return bookRepository.save(book);
+        // convert entity to DTO
+        return modelMapper.map(bookRepository.save(book), BookDTO.class);
     }
 
-    public Book getBookById(Long id) {
+    public BookDTO getBookById(Long id) {
 
         Optional<Book> result = bookRepository.findById(id);
         if (result.isPresent()) {
-            return result.get();
+            BookDTO bookResponse = modelMapper.map(result.get(), BookDTO.class);
+            return bookResponse;
         } else {
             throw new ServiceException("book with id " + id + " does not exists");
         }
     }
 
-    public Book getBookByTitle(String title) {
+    public BookDTO getBookByTitle(String title) {
 
         Optional<Book> result = bookRepository.findByTitle(title);
         if (result.isPresent()) {
-            return result.get();
+            BookDTO bookResponse = modelMapper.map(result.get(), BookDTO.class);
+            return bookResponse;
         } else {
             throw new ServiceException("book with title " + title + " does not exists");
         }
@@ -56,7 +71,7 @@ public class BookService {
         return "Book removed !! " + id;
     }
 
-    public Book updateBook(Book book) {
+    public BookDTO updateBook(Book book) {
         if (book != null) {
             Book existingBook =
                     bookRepository.findById(book.getId()).orElse(null);
@@ -65,7 +80,8 @@ public class BookService {
                 existingBook.setDescription(book.getDescription());
                 existingBook.setIsbn(book.getIsbn());
                 existingBook.setAuthor(book.getAuthor());
-                return bookRepository.save(existingBook);
+                BookDTO bookResponse = modelMapper.map(bookRepository.save(existingBook), BookDTO.class);
+                return bookResponse;
             } else {
                 return null;
             }
@@ -74,4 +90,11 @@ public class BookService {
     }
 
 
+    public List<BookDTO> getBooks() {
+        List<Book> book = bookRepository.findAll();
+        if (book != null) {
+            return ObjectMapperUtils.mapAll(book, BookDTO.class);
+        }
+        else return null;
+    }
 }

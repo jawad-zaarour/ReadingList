@@ -1,5 +1,6 @@
 package com.learning.readinglist;
 
+import com.learning.readinglist.dto.BookDTO;
 import com.learning.readinglist.entity.Book;
 import com.learning.readinglist.repo.BookRepository;
 import com.learning.readinglist.service.BookService;
@@ -7,9 +8,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 
 import java.util.Optional;
 
@@ -23,19 +25,33 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
 
-    //@Autowired
-    private BookService bookService;
+    @InjectMocks
+    private BookService bookService = new BookService();
 
-    Book book;
+    @Mock
+    private ModelMapper modelMapper;
 
     @Mock
     private BookRepository bookRepository;
 
+    private BookDTO bookDTO = new BookDTO();
+    private Book book = new Book();
+
     @BeforeEach
     void setUp() {
-        bookService = new BookService(bookRepository);
-        book = new Book(1L, "1111",
-                "Atoms", "Einstein", "Advanced");
+
+        book.setAuthor("Einstein");
+        book.setDescription("Advanced");
+        book.setId(1L);
+        book.setIsbn("1111");
+        book.setTitle("Atoms");
+
+        bookDTO.setAuthor("Einstein");
+        bookDTO.setDescription("Advanced");
+        bookDTO.setId(1L);
+        bookDTO.setIsbn("1111");
+        bookDTO.setTitle("Atoms");
+
     }
 
     /**
@@ -43,9 +59,10 @@ class BookServiceTest {
      */
     @Test
     void saveBookTest() {
+        when(modelMapper.map(any(), any())).thenReturn(bookDTO);
         long bookId = book.getId();
-
         //when
+        given(bookRepository.save(book)).willReturn(book);
         bookService.saveBook(book);
         //then
         ArgumentCaptor<Book> bookArgumentCaptor =
@@ -59,14 +76,10 @@ class BookServiceTest {
         assertNotNull(bookService.getBookById(bookId));
     }
 
-    @Test
-    void saveBookExistedTest() {
-        given(bookRepository.existsBookByIsbn(book.getIsbn())).willReturn(true);
 
-        // Writing Assertions for Exceptions
-        // Verify that the method "readingListServiceTest.saveBook(book)"
-        // under test of already book exciting throws the "ServiceException"
-        // that contains the message: "ISBN " + book.getIsbn() + " taken"
+    @Test
+    void saveBookExistedBookTest() {
+        given(bookRepository.existsBookByIsbn(book.getIsbn())).willReturn(true);
         assertThatThrownBy(() -> bookService.saveBook(book))
                 .isInstanceOf(ServiceException.class)
                 .hasMessageContaining("ISBN " + book.getIsbn() + " taken");
@@ -78,31 +91,29 @@ class BookServiceTest {
 
     @Test
     void getBookByIdTest() throws Exception {
-
-
+        when(modelMapper.map(any(), any())).thenReturn(bookDTO);
         when(bookRepository.findById(book.getId()))
                 .thenReturn(Optional.of(book));
 
-        Book book = bookService.getBookById(1L);
+        BookDTO book = bookService.getBookById(1L);
 
         assertThat("Einstein").isEqualTo(book.getAuthor());
     }
 
-
+    //Todo not working (results variable not import the updated dto book)
     @Test
     void updateBookTest() {
-
-        // given - precondition or setup
-        Optional<Book> optionalBook = Optional.of(book);
-        Mockito.when(bookRepository.findById(book.getId())).thenReturn(optionalBook);
-        Mockito.when(bookRepository.save(book)).thenReturn(book);
-        //change description and author
+        when(modelMapper.map(any(), any())).thenReturn(bookDTO);
+        given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
         book.setDescription("new dec");
         book.setAuthor("Ram");
-        // when -  action or the behaviour that we are going test
-        Book results = bookService.updateBook(book);
-        // then - verify the output
+        given(bookRepository.save(book)).willReturn(book);
+
+        BookDTO results = bookService.updateBook(book);
+
         assertNotNull(results);
         assertThat(results.getTitle()).isEqualTo("Atoms");
+        assertThat(results.getAuthor()).isEqualTo("Ram");
+        assertThat(results.getDescription()).isEqualTo("new dec");
     }
 }

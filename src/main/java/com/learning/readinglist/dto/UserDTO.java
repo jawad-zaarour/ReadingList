@@ -19,4 +19,8 @@ public class UserDTO {
     private boolean active;
     @JsonIgnore
     private String roles;
+
+
+
+
 }

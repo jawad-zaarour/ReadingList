@@ -1,6 +1,5 @@
 package com.learning.readinglist.util;
 
-import com.learning.readinglist.entity.User;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 

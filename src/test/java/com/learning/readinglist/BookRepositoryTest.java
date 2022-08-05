@@ -25,7 +25,7 @@ class BookRepositoryTest {
     }
 
     @Test
-    void findByReaderTest() {
+    void findByAuthorTest() {
         //given
         Book book_1 = new Book(20L, "1111", "Atoms", "Einstein", "Advanced");
         Book book_2 = new Book(30L, "2222", "Molecules", "Dirac", "Beginner");

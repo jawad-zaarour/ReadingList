@@ -1,12 +1,9 @@
 package com.learning.readinglist.controller;
 
+import com.learning.readinglist.dto.BookDTO;
 import com.learning.readinglist.dto.UserDTO;
-import com.learning.readinglist.entity.Book;
 import com.learning.readinglist.entity.User;
-import com.learning.readinglist.service.BookService;
 import com.learning.readinglist.service.UserService;
-import com.learning.readinglist.util.ObjectMapperUtils;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,21 +18,14 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private ModelMapper modelMapper;
-
-    @Autowired
-    private BookService bookService;
-
     @GetMapping("/everybody")
     public String all() {
         return ("<h1>Welcome all</h1>");
     }
 
     @PostMapping("/")
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
-        User userRequest = modelMapper.map(userDTO, User.class);
-        UserDTO userResponse = modelMapper.map(userService.createUser(userRequest), UserDTO.class);
+    public ResponseEntity<UserDTO> createUser(@RequestBody User user) {
+        UserDTO userResponse = userService.createUser(user);
         return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
     }
 
@@ -46,29 +36,24 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUser(@PathVariable("id") long id) {
-        User user = userService.getUser(id);
-        UserDTO response = modelMapper.map(user, UserDTO.class);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        UserDTO userResponse = userService.getUser(id);
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 
     //TODO (NEW)
     //Get all the users to specific book
     //Notes: I added JsonIgnore in the UserDTO class at the Set<BookDTO> books in order to get only users
     @GetMapping("/book/{bookId}")
-    public List<UserDTO> getUsersByBookId(@PathVariable("bookId") long bookId) {
-        List<User> users = userService.getUsersByBookId(bookId);
-        return ObjectMapperUtils.mapAll(users, UserDTO.class);
+    public ResponseEntity<List<UserDTO>> getUsersByBookId(@PathVariable("bookId") long bookId) {
+        List<UserDTO> users = userService.getUsersByBookId(bookId);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     //TODO Please check the logic of this method (NEW)
     //add EXCITING book to specific user
     @PutMapping("/{userId}/books/{bookId}")
     public ResponseEntity<UserDTO> addBookToUser(@PathVariable long bookId, @PathVariable long userId) {
-        Book book = bookService.getBookById(bookId);
-        User user = userService.getUser(userId);
-        user.getBooks().add(book);
-        userService.updateUser(user);
-        UserDTO response = modelMapper.map(user, UserDTO.class);
+        UserDTO response = userService.addBookToUser(bookId, userId);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -76,12 +61,26 @@ public class UserController {
     //add NEW book to specific user
     @PostMapping("/{userId}/books/")
     public ResponseEntity<UserDTO> addNewBookToUser(
-            @PathVariable long userId, @RequestBody Book newBook) {
+            @PathVariable long userId, @RequestBody BookDTO newBook) {
 
-        User user = userService.addBook(userId, newBook);
-        userService.updateUser(user);
-        UserDTO response = modelMapper.map(user, UserDTO.class);
+        UserDTO response = userService.addNewBookToUser(userId, newBook);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+        /*
+        what is the best way to write the below code?
+                UserDTO response = userService.addNewBookToUser(userId, newBook);
+                return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+                 or
+
+                 return new ResponseEntity<>(userService.addNewBookToUser(userId, newBook), HttpStatus.CREATED);
+        */
+    }
+    //TODO Please check the logic of this method (NEW)
+    //remove book from specific user
+    @DeleteMapping("/{userId}/books/{bookId}")
+    public String removeBookFromUser(@PathVariable long bookId, @PathVariable long userId) {
+        return userService.removeBookFromUser(bookId, userId);
     }
 
 }

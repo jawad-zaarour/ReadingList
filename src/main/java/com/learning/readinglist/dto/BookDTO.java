@@ -10,7 +10,7 @@ import lombok.Data;
 public class BookDTO {
 
     @JsonIgnore
-    private String id;
+    private Long id;
 
     private String isbn;
 
@@ -20,5 +20,14 @@ public class BookDTO {
 
     private String description;
 
+    public BookDTO(long id, String isbn, String title, String author, String description) {
+        this.id = id;
+        this.isbn = isbn;
+        this.title = title;
+        this.author = author;
+        this.description = description;
+    }
 
+    public BookDTO() {
+    }
 }
