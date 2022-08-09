@@ -25,6 +25,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
 
+    //TODO: you should not create an instance!
     @InjectMocks
     private BookService bookService = new BookService();
 

@@ -40,6 +40,15 @@ public class UserController {
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 
+    /**
+     * Put the java doc of the method here
+     * eg:
+     *
+     * Get all the users to specific book
+     *
+     * @param bookId: id of the book
+     * @return the id of the book
+     */
     //TODO (NEW)
     //Get all the users to specific book
     //Notes: I added JsonIgnore in the UserDTO class at the Set<BookDTO> books in order to get only users

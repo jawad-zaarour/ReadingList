@@ -43,6 +43,7 @@ public class BookController {
     @GetMapping("/book-by-title/{title}")
     public ResponseEntity<BookDTO> getBookByTitle(@PathVariable String title) {
         BookDTO bookResponse = bookService.getBookByTitle(title);
+
         if (bookResponse == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
@@ -62,6 +63,11 @@ public class BookController {
         return new ResponseEntity<>(bookResponse, HttpStatus.CREATED);
     }
 
+    /**
+     * TODO: this method should return as well ResponseEntity with http code = 204 -> ResponseEntity<>(HttpStatus.NO_CONTENT)
+     * @param id
+     * @return
+     */
     @DeleteMapping("/{id}")
     public String deleteBook(@PathVariable Long id) {
         return bookService.deleteBook(id);

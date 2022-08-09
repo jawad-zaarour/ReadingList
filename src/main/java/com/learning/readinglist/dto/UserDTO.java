@@ -10,17 +10,19 @@ import java.util.Set;
 public class UserDTO {
     @JsonIgnore
     private Long id;
+
     @JsonIgnore
     private Set<BookDTO> books = new HashSet<>();
+
     private String userName;
+
     @JsonIgnore
     private String password;
+
     private String email;
+
     private boolean active;
+
     @JsonIgnore
     private String roles;
-
-
-
-
 }

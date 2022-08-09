@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+//TODO: I didn't liked this type of mapper, I prefer to have a customer mapper for each entity
 public class ObjectMapperUtils {
     private static final ModelMapper modelMapper;
 
