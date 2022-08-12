@@ -1,6 +1,5 @@
 package com.learning.readinglist;
 
-import com.learning.readinglist.dto.BookDTO;
 import com.learning.readinglist.entity.Book;
 import com.learning.readinglist.repo.BookRepository;
 import org.junit.jupiter.api.AfterEach;

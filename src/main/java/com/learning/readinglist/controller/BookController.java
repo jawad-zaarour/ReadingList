@@ -19,12 +19,13 @@ public class BookController {
     private BookService bookService;
 
     @GetMapping
-    public ResponseEntity<List<BookDTO>> getBooks(){
+    public ResponseEntity<List<BookDTO>> getBooks() {
         List<BookDTO> bookResponse = bookService.getBooks();
-
-        if(CollectionUtils.isEmpty(bookResponse)){
+        System.out.println("daa");
+        if (CollectionUtils.isEmpty(bookResponse)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
+            System.out.println("daa222");
             return new ResponseEntity<>(bookResponse, HttpStatus.OK);
         }
     }
@@ -63,14 +64,19 @@ public class BookController {
         return new ResponseEntity<>(bookResponse, HttpStatus.CREATED);
     }
 
-    /**
-     * TODO: this method should return as well ResponseEntity with http code = 204 -> ResponseEntity<>(HttpStatus.NO_CONTENT)
-     * @param id
-     * @return
-     */
+
     @DeleteMapping("/{id}")
-    public String deleteBook(@PathVariable Long id) {
-        return bookService.deleteBook(id);
+    public ResponseEntity<String> deleteBook(@PathVariable Long id) {
+
+        Boolean isRemoved = bookService.deleteBook(id);
+
+        if (!isRemoved) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+
     }
 
 }

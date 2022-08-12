@@ -1,4 +1,4 @@
-package com.learning.readinglist;
+package com.learning.readinglist.security;
 
 import com.learning.readinglist.entity.User;
 import com.learning.readinglist.repo.UserRepository;
@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
+
     @Autowired
     UserRepository userRepository;
 

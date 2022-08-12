@@ -1,4 +1,4 @@
-package com.learning.readinglist;
+package com.learning.readinglist.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-
     @Autowired
     UserDetailsService userDetailsService;
 
@@ -25,9 +24,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .mvcMatchers("/api/books/L").hasAnyRole("ADMIN", "USER")
-                .mvcMatchers("/api/users/L").hasAnyRole("ADMIN", "USER")
-                .mvcMatchers("/api/users/everybody").permitAll()
+                .mvcMatchers("/api/books/*").permitAll()
+                .mvcMatchers("/api/users/*").hasAnyRole("ADMIN", "USER")
                 .and()
                 .formLogin();
         http.cors().and().csrf().disable();

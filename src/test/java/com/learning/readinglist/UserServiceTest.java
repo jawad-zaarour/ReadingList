@@ -1,7 +1,7 @@
 package com.learning.readinglist;
 
+import com.learning.readinglist.mapper.UserMapper;
 import com.learning.readinglist.dto.UserDTO;
-import com.learning.readinglist.entity.Book;
 import com.learning.readinglist.entity.User;
 import com.learning.readinglist.repo.UserRepository;
 import com.learning.readinglist.service.UserService;
@@ -12,12 +12,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -30,10 +27,10 @@ import static org.mockito.Mockito.when;
 public class UserServiceTest {
 
     @InjectMocks
-    private UserService userService = new UserService();
+    private UserService userService;
 
     @Mock
-    private ModelMapper modelMapper;
+    private UserMapper userMapper;
 
     @Mock
     private UserRepository userRepository;
@@ -65,7 +62,7 @@ public class UserServiceTest {
 
     @Test
     public void createUserTest() {
-        when(modelMapper.map(any(), any())).thenReturn(userDTO);
+        when(userMapper.getUserDTO(any())).thenReturn(userDTO);
         when(passwordEncoder.encode(any())).thenReturn("a");
         long userId = user.getId();
         given(userRepository.save(user)).willReturn(user);

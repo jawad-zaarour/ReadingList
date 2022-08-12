@@ -1,18 +1,16 @@
 package com.learning.readinglist.service;
 
-import com.learning.readinglist.ServiceException;
 import com.learning.readinglist.dto.BookDTO;
 import com.learning.readinglist.dto.UserDTO;
+import com.learning.readinglist.mapper.UserMapper;
 import com.learning.readinglist.entity.User;
 import com.learning.readinglist.repo.UserRepository;
-import com.learning.readinglist.util.ObjectMapperUtils;
-import org.modelmapper.ModelMapper;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -26,45 +24,32 @@ public class UserService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    //@Autowired
+    private UserMapper userMapper;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    public UserService() {
-
-    }
 
     public UserDTO createUser(User user) {
 
-        if (userRepository.findByUserName(user.getUserName()).isPresent() ||
-                userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new ServiceException("This user is already exist");
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            return userMapper.getUserDTO(userRepository.save(user));
+        } catch (ServiceException serviceException) {
+            throw new ServiceException("Error in converting btw DTO and Entity" + serviceException);
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        UserDTO userResponse = modelMapper.map(userRepository.save(user), UserDTO.class);
-        return userResponse;
     }
 
-    public void deleteUser(long id) {
+    public Boolean deleteUser(long id) {
         if (!userRepository.existsById(id)) {
-            throw new ServiceException("user with id " + id + " does not exists");
+            return false;
         }
         userRepository.deleteById(id);
+        return true;
     }
 
+
     public UserDTO getUser(long id) {
-
-        Optional<User> result = userRepository.findById(id);
-        if (result.isPresent()) {
-            UserDTO userResponse = modelMapper.map(result.get(), UserDTO.class);
-            return userResponse;
-        } else {
-            throw new ServiceException("user with id " + id + " does not exists");
-        }
-
+        return userRepository.findById(id)
+                .map(userMapper::getUserDTO).orElse(null);
 
     }
 
@@ -80,14 +65,14 @@ public class UserService {
     }
 
     public void updateUser(UserDTO userDTO) {
-        User user = modelMapper.map(userDTO, User.class);
+        User user = userMapper.getUser(userDTO);
         userRepository.save(user);
 
     }
 
     public List<UserDTO> getUsersByBookId(long bookId) {
         List<User> users = userRepository.findUsersByBooksId(bookId);
-        return ObjectMapperUtils.mapAll(users, UserDTO.class);
+        return userMapper.toUserDTOs(users);
     }
 
     public UserDTO addBookToUser(long bookId, long userId) {
@@ -98,10 +83,7 @@ public class UserService {
         return user;
     }
 
-    //todo so2al: hon 3ende bel bookService.getBookById berja3 exception eza ma la2a l book
-    //b7al raja3 exception ya3ne book==null ? kermll ane 3am shayek hon 3al book eza null
-    //bas bel mante2 mosta7el tkon null ya book aw exception !!
-    //so2ale howe lama yraje3 exception behot null bel variable ?
+
     public String removeBookFromUser(long bookId, long userId) {
         BookDTO book = bookService.getBookById(bookId);
         UserDTO user = this.getUser(userId);

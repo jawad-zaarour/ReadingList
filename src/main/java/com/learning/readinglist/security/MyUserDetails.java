@@ -1,4 +1,4 @@
-package com.learning.readinglist;
+package com.learning.readinglist.security;
 
 import com.learning.readinglist.entity.User;
 import org.springframework.security.core.GrantedAuthority;

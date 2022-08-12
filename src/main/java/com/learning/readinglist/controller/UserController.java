@@ -41,21 +41,15 @@ public class UserController {
     }
 
     /**
-     * Put the java doc of the method here
-     * eg:
-     *
      * Get all the users to specific book
      *
      * @param bookId: id of the book
      * @return the id of the book
      */
-    //TODO (NEW)
-    //Get all the users to specific book
-    //Notes: I added JsonIgnore in the UserDTO class at the Set<BookDTO> books in order to get only users
     @GetMapping("/book/{bookId}")
     public ResponseEntity<List<UserDTO>> getUsersByBookId(@PathVariable("bookId") long bookId) {
-        List<UserDTO> users = userService.getUsersByBookId(bookId);
-        return new ResponseEntity<>(users, HttpStatus.OK);
+        List<UserDTO> userList = userService.getUsersByBookId(bookId);
+        return new ResponseEntity<>(userList, HttpStatus.OK);
     }
 
     //TODO Please check the logic of this method (NEW)
@@ -75,15 +69,6 @@ public class UserController {
         UserDTO response = userService.addNewBookToUser(userId, newBook);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
 
-        /*
-        what is the best way to write the below code?
-                UserDTO response = userService.addNewBookToUser(userId, newBook);
-                return new ResponseEntity<>(response, HttpStatus.CREATED);
-
-                 or
-
-                 return new ResponseEntity<>(userService.addNewBookToUser(userId, newBook), HttpStatus.CREATED);
-        */
     }
     //TODO Please check the logic of this method (NEW)
     //remove book from specific user
