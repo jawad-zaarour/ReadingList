@@ -24,7 +24,7 @@ public class UserService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    //@Autowired
+    @Autowired
     private UserMapper userMapper;
 
 
@@ -92,7 +92,7 @@ public class UserService {
 
             return "book or user does not exist !!";
         }
-        if (user.getBooks().remove(book)) {
+        else if (user.getBooks().remove(book)) {
             this.updateUser(user);
             return book.getId() + " is removed from the reading list of " + user.getId();
         }

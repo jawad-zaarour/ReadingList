@@ -18,11 +18,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/everybody")
-    public String all() {
-        return ("<h1>Welcome all</h1>");
-    }
-
     @PostMapping("/")
     public ResponseEntity<UserDTO> createUser(@RequestBody User user) {
         UserDTO userResponse = userService.createUser(user);
@@ -30,8 +25,13 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable long id) {
-        userService.deleteUser(id);
+    public ResponseEntity<String> deleteUser(@PathVariable long id) {
+        Boolean isRemoved = userService.deleteUser(id);
+        if (!isRemoved) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
     }
 
     @GetMapping("/{id}")
@@ -62,7 +62,7 @@ public class UserController {
 
     //TODO Please check the logic of this method (NEW)
     //add NEW book to specific user
-    @PostMapping("/{userId}/books/")
+    @PutMapping("/{userId}/books/")
     public ResponseEntity<UserDTO> addNewBookToUser(
             @PathVariable long userId, @RequestBody BookDTO newBook) {
 
@@ -70,11 +70,15 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
 
     }
+
     //TODO Please check the logic of this method (NEW)
     //remove book from specific user
     @DeleteMapping("/{userId}/books/{bookId}")
-    public String removeBookFromUser(@PathVariable long bookId, @PathVariable long userId) {
-        return userService.removeBookFromUser(bookId, userId);
+    public ResponseEntity<String> removeBookFromUser(@PathVariable long bookId, @PathVariable long userId) {
+
+        String response = userService.removeBookFromUser(bookId, userId);
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+
     }
 
 }

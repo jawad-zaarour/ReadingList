@@ -21,11 +21,9 @@ public class BookController {
     @GetMapping
     public ResponseEntity<List<BookDTO>> getBooks() {
         List<BookDTO> bookResponse = bookService.getBooks();
-        System.out.println("daa");
         if (CollectionUtils.isEmpty(bookResponse)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            System.out.println("daa222");
             return new ResponseEntity<>(bookResponse, HttpStatus.OK);
         }
     }
@@ -64,19 +62,13 @@ public class BookController {
         return new ResponseEntity<>(bookResponse, HttpStatus.CREATED);
     }
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteBook(@PathVariable Long id) {
-
         Boolean isRemoved = bookService.deleteBook(id);
-
         if (!isRemoved) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-
     }
 
 }

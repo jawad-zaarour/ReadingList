@@ -1,8 +1,8 @@
 package com.learning.readinglist;
 
-import com.learning.readinglist.mapper.BookMapper;
 import com.learning.readinglist.dto.BookDTO;
 import com.learning.readinglist.entity.Book;
+import com.learning.readinglist.mapper.BookMapper;
 import com.learning.readinglist.repo.BookRepository;
 import com.learning.readinglist.service.BookService;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -54,9 +53,7 @@ class BookServiceTest {
 
     }
 
-    /**
-     * This method is considered as an integration test because it is testing the behavior of the db
-     */
+
     @Test
     void saveBookTest() {
         when(bookMapper.getBookDTO(any())).thenReturn(bookDTO);
@@ -103,7 +100,7 @@ class BookServiceTest {
     //Todo not working (results variable not import the updated dto book)
     @Test
     void updateBookTest() {
-        when(bookMapper.getBookDTO(any())).thenReturn(bookDTO);
+        given(bookMapper.getBookDTO(any())).willReturn(bookDTO);
         given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
         book.setDescription("new dec");
         book.setAuthor("Ram");

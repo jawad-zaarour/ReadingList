@@ -25,7 +25,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
                 .mvcMatchers("/api/books/*").permitAll()
-                .mvcMatchers("/api/users/*").hasAnyRole("ADMIN", "USER")
+                .mvcMatchers("/api/users/*").permitAll()
+        //hasAnyRole("ADMIN", "USER")
                 .and()
                 .formLogin();
         http.cors().and().csrf().disable();
