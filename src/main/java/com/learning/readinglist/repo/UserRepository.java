@@ -12,4 +12,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     //returns all users related to book with input bookId
     List<User> findUsersByBooksId (Long bookId);
-}
+
+    }
+
+

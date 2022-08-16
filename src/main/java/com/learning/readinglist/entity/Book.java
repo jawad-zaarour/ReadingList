@@ -19,9 +19,9 @@ public class Book {
 
     @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY,
             cascade = {CascadeType.DETACH,
-            CascadeType.MERGE,
-            CascadeType.REFRESH,
-            CascadeType.PERSIST})
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH,
+                    CascadeType.PERSIST})
     @JoinTable(name = "users_books",
             inverseJoinColumns = @JoinColumn(name = "BOOK_ID",
                     nullable = false,
