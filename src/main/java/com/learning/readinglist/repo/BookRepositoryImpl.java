@@ -1,6 +1,7 @@
 package com.learning.readinglist.repo;
 
 import com.learning.readinglist.entity.Book;
+import com.learning.readinglist.entity.QBook;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
 import com.querydsl.jpa.impl.JPAQuery;
