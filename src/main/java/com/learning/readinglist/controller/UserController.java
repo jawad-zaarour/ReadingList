@@ -2,6 +2,7 @@ package com.learning.readinglist.controller;
 
 import com.learning.readinglist.dto.BookDTO;
 import com.learning.readinglist.dto.UserDTO;
+import com.learning.readinglist.entity.Book;
 import com.learning.readinglist.entity.User;
 import com.learning.readinglist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUser(@PathVariable("id") long id) {
-        UserDTO userResponse = userService.getUser(id);
+        UserDTO userResponse = userService.getUserDTO(id);
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 
@@ -64,7 +65,7 @@ public class UserController {
     //add NEW book to specific user
     @PutMapping("/{userId}/books/")
     public ResponseEntity<UserDTO> addNewBookToUser(
-            @PathVariable long userId, @RequestBody BookDTO newBook) {
+            @PathVariable long userId, @RequestBody Book newBook) {
 
         UserDTO response = userService.addNewBookToUser(userId, newBook);
         return new ResponseEntity<>(response, HttpStatus.CREATED);

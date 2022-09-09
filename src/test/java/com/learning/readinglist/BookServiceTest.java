@@ -1,10 +1,12 @@
 package com.learning.readinglist;
 
 import com.learning.readinglist.dto.BookDTO;
+import com.learning.readinglist.entity.Author;
 import com.learning.readinglist.entity.Book;
 import com.learning.readinglist.mapper.BookMapper;
 import com.learning.readinglist.repo.BookRepository;
 import com.learning.readinglist.service.BookService;
+import com.learning.readinglist.util.EnBookType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,17 +37,23 @@ class BookServiceTest {
 
     private BookDTO bookDTO = new BookDTO();
     private Book book = new Book();
+    private Author author = new Author();
 
     @BeforeEach
     void setUp() {
 
-        book.setAuthor("Einstein");
+        author.setId(1L);
+        author.setName("Einstein");
+
         book.setDescription("Advanced");
         book.setId(1L);
         book.setIsbn("1111");
         book.setTitle("Atoms");
+        book.setType(EnBookType.Science);
+        book.setAuthor(author);
 
-        bookDTO.setAuthor("Einstein");
+
+        //bookDTO.setAuthor("Einstein");
         bookDTO.setDescription("Advanced");
         bookDTO.setId(1L);
         bookDTO.setIsbn("1111");
@@ -70,7 +78,7 @@ class BookServiceTest {
         assertThat(captureBook).isEqualTo(book);
 
         given(bookRepository.findById(bookId)).willReturn(Optional.ofNullable(book));
-        assertNotNull(bookService.getBookById(bookId));
+        assertNotNull(bookService.getBookDTOById(bookId));
     }
 
 
@@ -88,29 +96,28 @@ class BookServiceTest {
 
     @Test
     void getBookByIdTest() throws Exception {
-        when(bookMapper.getBookDTO(any())).thenReturn(bookDTO);
+        //when(bookMapper.getBookDTO(any())).thenReturn(bookDTO);
         when(bookRepository.findById(book.getId()))
                 .thenReturn(Optional.of(book));
 
-        BookDTO book = bookService.getBookById(1L);
+        Book book1 = bookService.getBookById(1L);
 
-        assertThat("Einstein").isEqualTo(book.getAuthor());
+       assertThat("Einstein").isEqualTo(book1.getAuthor().getName());
     }
 
     //Todo not working (results variable not import the updated dto book)
     @Test
     void updateBookTest() {
-        given(bookMapper.getBookDTO(any())).willReturn(bookDTO);
-        given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
+
         book.setDescription("new dec");
-        book.setAuthor("Ram");
+        given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
         given(bookRepository.save(book)).willReturn(book);
+        given(bookMapper.getBookDTO(any())).willReturn(bookDTO);
 
         BookDTO results = bookService.updateBook(book);
 
         assertNotNull(results);
         assertThat(results.getTitle()).isEqualTo("Atoms");
-        assertThat(results.getAuthor()).isEqualTo("Ram");
         assertThat(results.getDescription()).isEqualTo("new dec");
     }
 }

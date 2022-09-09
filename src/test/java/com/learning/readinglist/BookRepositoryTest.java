@@ -1,11 +1,16 @@
 package com.learning.readinglist;
 
+import com.learning.readinglist.entity.Author;
 import com.learning.readinglist.entity.Book;
+import com.learning.readinglist.repo.AuthorRepository;
 import com.learning.readinglist.repo.BookRepository;
+import com.learning.readinglist.util.EnBookType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -15,44 +20,62 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 class BookRepositoryTest {
 
     @Autowired
-    private BookRepository bookRepositoryUnderTest;
+    private BookRepository bookRepository;
 
+    @Autowired
+    private AuthorRepository authorRepository;
+
+    //private BookDTO bookDTO = new BookDTO();
+    private Book book = new Book();
+    private Author author = new Author();
+
+    @BeforeEach
+    void setUp() {
+
+        author.setId(1L);
+        author.setName("Einstein");
+
+        book.setDescription("Advanced");
+        book.setId(1L);
+        book.setIsbn("1111");
+        book.setTitle("Atoms");
+        book.setType(EnBookType.Science);
+        book.setAuthor(author);
+
+    }
 
     @AfterEach
     void tearDown() {
-        bookRepositoryUnderTest.deleteAll();
+        bookRepository.deleteAll();
+        authorRepository.deleteAll();
     }
 
     @Test
     void findByAuthorTest() {
-        //given
-        Book book_1 = new Book(20L, "1111", "Atoms", "Einstein", "Advanced");
-        Book book_2 = new Book(30L, "2222", "Molecules", "Dirac", "Beginner");
-        Book book_3 = new Book(40L, "3333", "JAVA", "Einstein", "Medium");
-        bookRepositoryUnderTest.save(book_1);
-        bookRepositoryUnderTest.save(book_2);
-        bookRepositoryUnderTest.save(book_3);
+
+        //Book book_1 = new Book(20L, null,"1111", "Atoms", author,
+        //     EnBookType.Science,"Advanced");
+        authorRepository.save(author);
+        bookRepository.save(book);
         //when
-        List<Book> expectedBook = bookRepositoryUnderTest.findByAuthor("Einstein");
+        List<Book> expectedBook = bookRepository.getBooksByAuthorName("Einstein");
         //then
-        assertThat(expectedBook.size()).isEqualTo(2);
+        assertThat(expectedBook.size()).isEqualTo(1);
+        assertThat(expectedBook.get(0).getDescription()).isEqualTo("Advanced");
+        assertThat(expectedBook.get(0).getType()).isEqualTo(EnBookType.Science);
 
 
     }
 
     @Test
     void findByTitleTest() {
-        //given
-        Book book_1 = new Book(20L, "1111", "Atoms", "Einstein", "Advanced");
-        Book book_2 = new Book(30L, "2222", "Molecules", "Dirac", "Beginner");
-        Book book_3 = new Book(40L, "3333", "JAVA", "Einstein", "Medium");
-        bookRepositoryUnderTest.save(book_1);
-        bookRepositoryUnderTest.save(book_2);
-        bookRepositoryUnderTest.save(book_3);
+
+        authorRepository.save(author);
+        bookRepository.save(book);
         //when
-        Optional<Book> expectedBook = bookRepositoryUnderTest.findByTitle("Molecules");
+        Optional<Book> expectedBook = bookRepository.findByTitle("Atoms");
         //then
-        assertThat(expectedBook.get().getTitle()).isEqualTo("Molecules");
+        assertThat(expectedBook.get().getTitle()).isEqualTo("Atoms");
         assertThat(expectedBook.get().getTitle()).isNotEqualTo("MoleculeS");
     }
 }

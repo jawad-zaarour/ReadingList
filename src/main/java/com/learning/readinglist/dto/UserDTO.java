@@ -11,7 +11,7 @@ public class UserDTO {
     @JsonIgnore
     private Long id;
 
-
+    @JsonIgnore
     private Set<BookDTO> books = new HashSet<>();
 
     private String userName;
@@ -25,4 +25,6 @@ public class UserDTO {
 
     @JsonIgnore
     private String roles;
+
+
 }

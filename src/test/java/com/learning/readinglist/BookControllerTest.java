@@ -5,6 +5,7 @@ import com.learning.readinglist.controller.BookController;
 import com.learning.readinglist.dto.BookDTO;
 import com.learning.readinglist.entity.Book;
 import com.learning.readinglist.service.BookService;
+import com.learning.readinglist.util.EnBookType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,13 +44,13 @@ public class BookControllerTest {
     @BeforeEach
     public void setup() {
         bookDTO = new BookDTO(1L, "1111",
-                "Atoms", "Einstein", "Advanced");
+                "Atoms","Advanced",EnBookType.Science);
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
     public void shouldReturnBookById() throws Exception {
-        given(bookService.getBookById(anyLong())).willReturn(bookDTO);
+        given(bookService.getBookDTOById(anyLong())).willReturn(bookDTO);
 
         this.mockMvc.perform(
                         MockMvcRequestBuilders.get("/api/books/{id}", 20L)
@@ -62,10 +63,10 @@ public class BookControllerTest {
     @Test
     @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
     public void shouldReturnBookByTitle() throws Exception {
-        given(bookService.getBookByTitle(anyString())).willReturn(bookDTO);
+        given(bookService.getBookDTOByTitle(anyString())).willReturn(bookDTO);
 
         this.mockMvc.perform(
-                        MockMvcRequestBuilders.get("/api/books/book-by-title/Atoms")
+                        MockMvcRequestBuilders.get("/api/books/title/Atoms")
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())

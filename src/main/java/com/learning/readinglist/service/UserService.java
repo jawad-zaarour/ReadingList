@@ -1,9 +1,9 @@
 package com.learning.readinglist.service;
 
-import com.learning.readinglist.dto.BookDTO;
 import com.learning.readinglist.dto.UserDTO;
-import com.learning.readinglist.mapper.UserMapper;
+import com.learning.readinglist.entity.Book;
 import com.learning.readinglist.entity.User;
+import com.learning.readinglist.mapper.UserMapper;
 import com.learning.readinglist.repo.UserRepository;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,25 +47,30 @@ public class UserService {
     }
 
 
-    public UserDTO getUser(long id) {
+    public User getUser(long id) {
+//        return userRepository.findById(id)
+//                .map(userMapper::getUserDTO).orElse(null);
+        return userRepository.findById(id).orElse(null);
+    }
+
+    public UserDTO getUserDTO(long id) {
         return userRepository.findById(id)
                 .map(userMapper::getUserDTO).orElse(null);
-
     }
 
 
-    public UserDTO addNewBookToUser(long userId, BookDTO newBook) {
-        UserDTO user = getUser(userId);
+    public UserDTO addNewBookToUser(long userId, Book newBook) {
+        User user = getUser(userId);
         if (user == null) {
             return null;
         }
         user.getBooks().add(newBook);
         this.updateUser(user);
-        return user;
+        return userMapper.getUserDTO(user);
     }
 
-    public void updateUser(UserDTO userDTO) {
-        User user = userMapper.getUser(userDTO);
+    public void updateUser(User user) {
+        //User user = userMapper.getUser(userDTO);
         userRepository.save(user);
 
     }
@@ -76,23 +81,22 @@ public class UserService {
     }
 
     public UserDTO addBookToUser(long bookId, long userId) {
-        BookDTO book = bookService.getBookById(bookId);
-        UserDTO user = this.getUser(userId);
-        user.getBooks().add(book);
+        Book book = bookService.getBookById(bookId);
+        User user = this.getUser(userId);
+        user.addBook(book);
         this.updateUser(user);
-        return user;
+        return userMapper.getUserDTO(user);
     }
 
 
     public String removeBookFromUser(long bookId, long userId) {
-        BookDTO book = bookService.getBookById(bookId);
-        UserDTO user = this.getUser(userId);
+        Book book = bookService.getBookById(bookId);
+        User user = this.getUser(userId);
 
         if (book == null || user == null) {
 
             return "book or user does not exist !!";
-        }
-        else if (user.getBooks().remove(book)) {
+        } else if (user.getBooks().remove(book)) {
             this.updateUser(user);
             return book.getId() + " is removed from the reading list of " + user.getId();
         }
